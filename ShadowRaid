@@ -1,0 +1,133 @@
+_G.SelectedClass = "Class 1"
+local CheatModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/CheatModule"))()
+local f = CheatModule.exports
+local ws = game:service'Workspace'
+local rPath = game:service'ReplicatedStorage'["RS_Package"].Remotes
+local plrN = game:service'Players'.LocalPlayer.Name
+local ResetEvent = rPath.ForceReset
+local ClassEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.SetClass
+ClassEvent:FireServer(_G.SelectedClass)
+wait(0.1)
+local ReadyEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.PlayerReady
+ReadyEvent:FireServer(_G.SelectedClass)
+local MaskOn = game:GetService("ReplicatedStorage")["RS_Package"].Assets.Remotes.MaskOn
+local ts = game:service'TweenService'
+local plr = ws.Criminals:WaitForChild(plrN)
+local CompleteEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.CompleteInteraction
+local StartEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.StartInteraction
+local hrp = plr.HumanoidRootPart
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+f.Init()
+MaskOn:FireServer()
+wait(.1)
+f.Float()
+f.KillPolice()
+repeat wait() until #workspace.Police:GetChildren() == 0
+game:GetService("RunService").RenderStepped:Connect(function()
+    game:GetService("ReplicatedStorage").RS_Package.Remotes.PlayerYell:FireServer(workspace.Citizens:GetChildren())
+end)
+f.NoFallDamage()
+workspace.Map:WaitForChild("KeyCard")
+wait(.2)
+function a(e) 
+	wait(.2)
+	hrp.Anchored = e
+end
+for i,v in pairs(workspace.Map:GetChildren()) do 
+	if v.Name == "KeyCard" and v:FindFirstChild("KeyCard") then 
+		a(false)
+		hrp.CFrame = v.KeyCard.CFrame - Vector3.new(0,5,0)
+		a(true)
+		local newn = v.Name.."Current"
+		v.Name = newn
+		local g = workspace.Map:FindFirstChild(newn)
+		repeat
+			StartEvent:FireServer(g)
+			wait()
+			CompleteEvent:FireServer(g)
+		until workspace.Map:FindFirstChild(newn) == nil
+		a(false)
+	end
+end
+
+for i,v in pairs(game:GetService("Workspace").Map.VaultCardReaders:GetChildren()) do 
+	if v.Name ~= "Card Read!" then 
+		a(false)
+		hrp.CFrame = v.Screen.CFrame + Vector3.new(0,5,0)
+		a(true)
+		local newn = v.Name.."Current"
+		v.Name = newn
+		local ob = workspace.Map.VaultCardReaders:FindFirstChild(newn)
+		repeat
+			StartEvent:FireServer(ob)
+			wait()
+			CompleteEvent:FireServer(ob)
+		until workspace.Map.VaultCardReaders:FindFirstChild(newn) == nil
+		a(false)
+	end
+end
+
+a(false)
+local old = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+local c = workspace.Map.Crowbars:FindFirstChild("Crowbar")
+hrp.CFrame = c.Handle.CFrame
+c.Name = "Current"
+a(true)
+repeat
+	StartEvent:FireServer(workspace.Map.Crowbars:FindFirstChild("Current"))
+	wait()
+	CompleteEvent:FireServer(workspace.Map.Crowbars:FindFirstChild("Current"))
+until workspace.Map.Crowbars:FindFirstChild("Current") == nil
+a(false)
+for i,v in pairs(workspace.Map.ShadowBoxes:GetChildren()) do 
+	a(false)
+	hrp.CFrame = v.Part.CFrame - Vector3.new(0,10,0)
+	a(true)
+	local newn = v.Name.."Current"
+	v.Name = newn
+	local o = v.Parent:FindFirstChild(newn)
+	repeat
+		StartEvent:FireServer(o)
+		wait()
+		CompleteEvent:FireServer(o)
+	until workspace.Map.ShadowBoxes:FindFirstChild(newn) == nil
+	a(false)
+end
+for i,v in pairs(workspace.BigLoot:GetChildren()) do
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = (v.PrimaryPart.CFrame or v:FindFirstChildWhichIsA("Part").CFrame) - Vector3.new(0,10,0)
+	a(true)
+    local newn = v.Name.."Current"
+    v.Name = newn
+    repeat
+        game:GetService("ReplicatedStorage")["RS_Package"].Remotes.StartInteraction:FireServer(v)
+        wait(.1)
+        game:GetService("ReplicatedStorage")["RS_Package"].Remotes.CompleteInteraction:FireServer(v)
+    until workspace.BigLoot:FindFirstChild(newn) == nil
+	a(false)
+end
+for i,v in pairs(workspace.Lootables:GetChildren()) do
+	if v.Name ~= "DepositGoldBar" then continue end
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = (v.PrimaryPart.CFrame or v:FindFirstChildWhichIsA("Part").CFrame) - Vector3.new(0,10,0)
+	a(true)
+    local newn = v.Name.."Current"
+    v.Name = newn
+    repeat
+        game:GetService("ReplicatedStorage")["RS_Package"].Remotes.StartInteraction:FireServer(v)
+        wait(.1)
+        game:GetService("ReplicatedStorage")["RS_Package"].Remotes.CompleteInteraction:FireServer(v)
+    until workspace.BigLoot:FindFirstChild(newn) == nil
+	a(false)
+end
+
+
+local goal ={}
+goal.CFrame = ws.BagSecuredArea.FloorPart.CFrame + Vector3.new(0,7,0)
+local tween = ts:Create(hrp, TweenInfo.new(5), goal)
+tween:Play() 
+tween.Completed:Wait()
+rPath.ThrowBag:FireServer(ws.BagSecuredArea.FloorPart.CFrame)
+wait(3)
+ResetEvent:FireServer()
