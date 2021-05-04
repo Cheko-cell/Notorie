@@ -1,0 +1,194 @@
+if game.PlaceId ~= 1470780246 then return end
+local RunService = game:GetService("RunService")
+local CheatModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/CheatModule"))()
+local f = CheatModule.exports
+local ws = game:service'Workspace'
+local rPath = game:service'ReplicatedStorage'["RS_Package"].Remotes
+local plrN = game:service'Players'.LocalPlayer.Name
+local ts = game:service'TweenService'
+local ClassEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.SetClass
+ClassEvent:FireServer("Class 1")
+wait(0.1)
+local ReadyEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.PlayerReady
+ReadyEvent:FireServer("Class 1")
+local plr = ws.Criminals:WaitForChild(plrN)
+wait(10)
+local CompleteEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.CompleteInteraction
+local StartEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.StartInteraction
+local hrp = plr.HumanoidRootPart
+local MaskOn = game:GetService("ReplicatedStorage")["RS_Package"].Assets.Remotes.MaskOn
+local char = game:GetService("Players").LocalPlayer.Character
+function GetBrickMan() 
+    for i,v in pairs(game:GetService("Workspace").Citizens:GetChildren()) do 
+        if v:FindFirstChild("Brick_man") then 
+            return v; 
+        end
+    end
+	return nil
+end
+function GetBrickManBody() 
+    for i,v in pairs(game:GetService("Workspace").Bodies:GetChildren()) do 
+        if v:FindFirstChild("Brick_man") then 
+            return v; 
+        end
+    end
+	return nil
+end
+function GotDetected() 
+	local targets = {}
+	for i,v in pairs(workspace.Citizens:GetChildren()) do table.insert(targets, v) end 
+	for i,v in pairs(workspace.Police:GetChildren()) do  table.insert(targets, v) end 
+	for i,v in pairs(game:GetService("Workspace").Cameras:GetChildren()) do  table.insert(targets, v) end 
+	for i, v in pairs(targets) do 
+		if v:FindFirstChild("CamName") then 
+			if v.Phone.Active == true then return true end
+		else
+			if v:FindFirstChild("Alerted") then 
+				return true
+			end
+		end
+	end
+	return false
+end
+coroutine.wrap(function()
+	repeat wait() until GotDetected() == true 
+	rPath.ForceReset:FireServer()
+end)()
+f.Init()
+f.Float()
+local tween = ts:Create(hrp, TweenInfo.new(3), {CFrame = hrp.CFrame - Vector3.new(0,10,0)})
+tween:Play() 
+tween.Completed:Wait()
+function WaitForIt(ci) 
+	if ci == nil then return false end
+	local max = 25
+	local targets = {}
+	for i,v in pairs(workspace.Citizens:GetChildren()) do if v ~= ci then table.insert(targets, v) end end 
+	for i,v in pairs(workspace.Police:GetChildren()) do if v ~= ci then table.insert(targets, v) end end 
+	for i,v in pairs(game:GetService("Workspace").Cameras:GetChildren()) do if v ~= ci then table.insert(targets, v) end end 
+	for i,v in pairs(targets) do
+		 if ((v:FindFirstChild("HumanoidRootPart") or v.PrimaryPart).CFrame.p - ci.HumanoidRootPart.CFrame.p).magnitude < max then
+			 return false
+		end 
+	end 
+	return true
+end
+repeat wait() until WaitForIt(GetBrickMan())
+MaskOn:FireServer()
+f.Kill(GetBrickMan())
+f.Noclip(true)
+repeat wait() until GetBrickManBody() ~= nil
+f.NoFallDamage()
+game.RunService.Heartbeat:Wait() -- shit breaks
+hrp.CFrame = GetBrickManBody().HumanoidRootPart.CFrame - Vector3.new(0,10,0)
+wait(.2)
+hrp.Anchored = true
+local Bagged = false
+coroutine.wrap(function()
+	repeat 
+		StartEvent:FireServer(GetBrickManBody())
+		wait()
+		CompleteEvent:FireServer(GetBrickManBody())
+	until GetBrickManBody() == nil
+	Bagged = true
+end)()
+ws.Map:WaitForChild("KeyCard")
+repeat
+	StartEvent:FireServer(ws.Map:FindFirstChild("KeyCard"))
+    wait()
+    CompleteEvent:FireServer(ws.Map:FindFirstChild("KeyCard"))
+until ws.Map:FindFirstChild("KeyCard") == nil
+repeat wait() until Bagged == true
+hrp.Anchored = false
+   for c, z in pairs(ws.Map.Archives:GetChildren()) do 
+       if ws.Map:FindFirstChild("FaxMachine") then break end
+		hrp.CFrame = z.Part.CFrame - Vector3.new(0,5,0)
+		z.Name = "Shelf1"
+    repeat
+       --StartEvent:FireServer(ws.Map.Archives:FindFirstChild("Shelf1")) unprotected lmao
+       wait()
+       CompleteEvent:FireServer(ws.Map.Archives:FindFirstChild("Shelf1"))
+   until not ws.Map.Archives:FindFirstChild("Shelf1")
+end
+ws.Map:WaitForChild("FaxMachine")
+   hrp.CFrame = ws.Map.FaxMachine.Part.CFrame - Vector3.new(0,7,0)
+   wait(.2)
+   hrp.Anchored = true
+   repeat
+       StartEvent:FireServer(ws.Map:FindFirstChild("FaxMachine"))
+       wait(.1)
+       CompleteEvent:FireServer(ws.Map:FindFirstChild("FaxMachine"))
+   until ws.Map:FindFirstChild("Faxxed")
+   hrp.Anchored = false
+ws.Map:WaitForChild("LockedDoor")
+local SafeSpot = ws.Map.LockedDoor.DoorHolder.CFrame + Vector3.new(0,7,0)
+hrp.CFrame = SafeSpot
+   repeat
+       StartEvent:FireServer(ws.Map:FindFirstChild("LockedDoor"))
+       wait(.1)
+       CompleteEvent:FireServer(ws.Map:FindFirstChild("LockedDoor"))
+   until ws.Map:FindFirstChild("OpenDoor")
+    hrp.CFrame = game:GetService("Workspace").Map.GasEnter.Part.CFrame + Vector3.new(0,6,4)
+   repeat
+	StartEvent:FireServer(ws.Map:FindFirstChild("GasEnter"))
+    wait(0)
+    CompleteEvent:FireServer(ws.Map:FindFirstChild("GasEnter"))
+  until game:GetService("Workspace").Map:FindFirstChild("gassy")
+   ws.Map:WaitForChild("Notes")
+   for k,p in pairs(ws.Map.Notes:GetChildren()) do 
+	hrp.CFrame = p.Part.CFrame - Vector3.new(0,10,0)
+	p.Name = "ImportantNote1"
+	repeat
+		StartEvent:FireServer(ws.Map.Notes:FindFirstChild("ImportantNote1"))
+		wait(.1)
+		CompleteEvent:FireServer(ws.Map.Notes:FindFirstChild("ImportantNote1"))
+	until ws.Map.Notes:FindFirstChild("ImportantNote1") == nil
+ end
+ for i,v in pairs(ws.BigLoot:GetChildren()) do 
+     if v.Name == "DepositMoneyStack" then 
+   hrp.CFrame = v.Hitbox.CFrame - Vector3.new(0,7,0)
+   v.Name = "DepositMoneyStack1"
+   pcall(function()
+   repeat
+       --StartEvent:FireServer(ws.BigLoot:FindFirstChild("DepositMoneyStack1"))
+       wait()
+       CompleteEvent:FireServer(ws.BigLoot:FindFirstChild("DepositMoneyStack1"))
+   until not ws.BigLoot:FindFirstChild("DepositMoneyStack1")
+   end)
+     end 
+end
+local goal = {}
+   goal.CFrame = ws.BagSecuredArea.FloorPart.CFrame - Vector3.new(0,10,0)
+
+   local tweenInfo = TweenInfo.new(7) 
+
+   local tween = ts:Create(hrp, tweenInfo, goal)
+
+   tween:Play() 
+   tween.Completed:Wait()
+   local goal = {}
+   goal.CFrame = ws.BagSecuredArea.FloorPart.CFrame + Vector3.new(0,10,0)
+
+   local tweenInfo = TweenInfo.new(1) 
+
+   local tween = ts:Create(hrp, tweenInfo, goal)
+
+   tween:Play() 
+   tween.Completed:Wait()
+rPath.ThrowBag:FireServer(ws.BagSecuredArea.FloorPart.CFrame)
+wait(.3)
+ hrp.CFrame = SafeSpot
+ ws.Map:WaitForChild("GMCKeycodeInput")
+ wait(1)
+ hrp.CFrame = game:GetService("Workspace").Map.GMCKeycodeInput.Display.CFrame - Vector3.new(0,10,0)
+ repeat
+	hrp.CFrame = game:GetService("Workspace").Map.GMCKeycodeInput.Display.CFrame - Vector3.new(0,10,0)
+	StartEvent:FireServer(ws.Map:FindFirstChild("GMCKeycodeInput"))
+	wait(.1)
+	CompleteEvent:FireServer(ws.Map:FindFirstChild("GMCKeycodeInput"))
+ until ws.Map:FindFirstChild("GMCKeycodeInput") == nil
+
+hrp.CFrame = ws.BagSecuredArea.FloorPart.CFrame + Vector3.new(0,7,0)
+--game:GetService("ReplicatedStorage").CriminalServiceGetXP
+repeat wait() until game:GetService("ReplicatedStorage")["RS_Package"].ReplicatedGameStatus.Objective.Value:lower():find("escape")
+rPath.ForceReset:FireServer()
