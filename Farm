@@ -228,7 +228,7 @@ elseif game.PlaceId == Ids.Authority then
             end
         end)
     end)
-    loadstring(game:HttpGet("https://anomicxv2.000webhostapp.com/script/authority.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/Authority"))()
 elseif game.PlaceId == Ids.Jewlery then
     function GetData() 
         print("Getting data..")
@@ -302,7 +302,7 @@ elseif game.PlaceId == Ids.Jewlery then
             end
         end)
     end)
-    loadstring(game:HttpGet("https://anomicxv2.000webhostapp.com/script/jewlery.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/Jewelry"))()
 elseif game.PlaceId == Ids["Shadow Raid"] then 
     function GetData() 
         print("Getting data..")
@@ -368,7 +368,7 @@ elseif game.PlaceId == Ids["Shadow Raid"] then
             end
         end)
     end)
-    loadstring(game:HttpGet("https://anomicxv2.000webhostapp.com/script/shadowraid.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/ShadowRaid"))()
 elseif game.PlaceId == Ids["Golden Mask Casino"] then
     function GetData() 
         print("Getting data..")
@@ -434,7 +434,7 @@ elseif game.PlaceId == Ids["Golden Mask Casino"] then
             end
         end)
     end)
-    loadstring(game:HttpGet("https://anomicxv2.000webhostapp.com/script/gmc.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/GMC"))()
 elseif game.PlaceId == Ids["Brick Bank"] then
     function GetData() 
         print("Getting data..")
@@ -500,5 +500,5 @@ elseif game.PlaceId == Ids["Brick Bank"] then
             end
         end)
     end)
-    loadstring(game:HttpGet("https://anomicxv2.000webhostapp.com/script/brickbank.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/BrickBank"))()
 end
