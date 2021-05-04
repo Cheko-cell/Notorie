@@ -1,0 +1,172 @@
+repeat wait() until game.IsLoaded
+--credits to iy owners for this (too lazy to make my own)
+function randomString(length)
+	local res = ""
+	for i = 1, length do
+		res = res .. string.char(math.random(97, 122))
+	end
+	return res
+end
+function getRoot(e) 
+        return e.HumanoidRootPart 
+end
+getgenv().floatname = randomString(50)
+local noclip = false
+local function NoclipLoop()
+if noclip == true then
+	for _, child in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+			if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= floatname then
+				child.CanCollide = false
+			end
+	end
+end end
+Noclipping = game:GetService('RunService').Stepped:Connect(NoclipLoop)
+--float
+    
+	 function Float() 
+	 print("Float() called.")
+	 plr = game.Players.LocalPlayer 
+	 speaker = game.Players.LocalPlayer 
+	 mouse = plr:GetMouse() 
+	 IYMouse = mouse
+	
+	 local pchar = game.Players.LocalPlayer.Character
+	 
+	 print("Generating plataform..")
+		 spawn(function()
+			 local Float = Instance.new('Part')
+			 Float.Name = floatname
+			 Float.Parent = pchar
+			 Float.Transparency = 1
+			 Float.Size = Vector3.new(6,1,6)
+			 Float.Anchored = true
+			 local FloatValue = -3.5
+			 Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0,FloatValue,0)
+			 qUp = IYMouse.KeyUp:Connect(function(KEY)
+				 KEY = KEY:lower()
+				 if KEY == 'q' then
+					 FloatValue = FloatValue + 0.5
+				 end
+			 end)
+			 eUp = IYMouse.KeyUp:Connect(function(KEY)
+				 if KEY == 'e' then
+					 FloatValue = FloatValue - 0.5
+				 end
+			 end)
+			 qDown = IYMouse.KeyDown:Connect(function(KEY)
+				 if KEY == 'q' then
+					 FloatValue = FloatValue - 0.5
+				 end
+			 end)
+			 eDown = IYMouse.KeyDown:Connect(function(KEY)
+				 if KEY == 'e' then
+					 FloatValue = FloatValue + 0.5
+				 end
+			 end)
+			 floatDied = speaker.Character:FindFirstChildOfClass'Humanoid'.Died:Connect(function()
+				 FloatingFunc:Disconnect()
+				 Float:Destroy()
+				 qUp:Disconnect()
+				 eUp:Disconnect()
+				 qDown:Disconnect()
+				 eDown:Disconnect()
+				 floatDied:Disconnect()
+			 end)
+			 local function FloatPadLoop()
+				 if pchar:FindFirstChild(floatname) and getRoot(pchar) then
+					 Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0,FloatValue,0)
+				 else
+					 FloatingFunc:Disconnect()
+					 Float:Destroy()
+					 qUp:Disconnect()
+					 eUp:Disconnect()
+					 qDown:Disconnect()
+					 eDown:Disconnect()
+					 floatDied:Disconnect()
+				 end
+			 end			
+			 FloatingFunc = game:GetService('RunService').Heartbeat:Connect(FloatPadLoop)
+		 end)
+	 end
+local module = {
+    exports = {};
+    variables = {
+        RemoteKey = nil;
+		DamageRemote = game:GetService("ReplicatedStorage").RS_Package.Assets.Remotes.Damage;
+        RunService = game:GetService("RunService");
+        Players = game:GetService("Players");
+		ReplicatedStorage = game:GetService("ReplicatedStorage");
+    };
+    garbage = {
+        Destroy = function()end; 
+    };
+}
+--i like js module thingy stfu
+local LocalPlayer = module.variables.Players.LocalPlayer 
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait();
+local RSPackage = module.variables.ReplicatedStorage.RS_Package
+local Remotes = RSPackage.Remotes
+local InteractList = require(RSPackage.ReplicatedScripts.InteractList)()
+module.exports.Interact = function(obj, waitT, cName) 
+    Remotes.StartInteraction:FireServer(obj)
+    wait(waitT or InteractList[cName or obj.Name].timer)
+    Remotes.CompleteInteraction:FireServer(obj)
+end
+module.exports.Float = function() 
+    Float()
+end
+module.exports.Noclip = function(state) 
+    assert(typeof(state) == "boolean","to what you\'re toggling noclip to, retard")
+    noclip = state
+end
+module.exports.BypassTouch = function() 
+    if typeof(game:GetService("ReplicatedStorage"):FindFirstChild("RS_Package")) ~= "Instance" then return end --yes i wanted to use ~= operator so bad
+    for i,v in next, workspace:WaitForChild("Police") do 
+        pcall(function()
+            v:WaitForChild("HumanoidRootPart",10):WaitForChild("TouchInterest",5):Destroy()
+        end)
+    end
+end
+getgenv().BypassedDamage = false
+module.exports.NoFallDamage = function() 
+    if getgenv().BypassedDamage ~= true then 
+        module.variables.RunService.RenderStepped:Connect(function()
+            (Character:FindFirstChild("Health") or module.garbage):Destroy(); --stupid warning
+            (Character:FindFirstChild("Detection") or module.garbage):Destroy()
+        end)
+    end
+end
+module.exports.RemoteKey = function()
+	for i, v in  pairs(getgc()) do
+		if typeof(v) == "function" and getfenv(v).script == game:GetService("Players").LocalPlayer.PlayerScripts.SPS_Package.LocalGuns then
+			for i, v in next, debug.getupvalues(v) do
+				if i == 17 and typeof(v) == "string" then
+					return v;
+				end
+			end
+		end
+	end
+end
+module.exports.Damage = function(Char)
+	pcall(function()
+        coroutine.wrap(function()
+			module.variables.DamageRemote:FireServer("Damage", module.variables.RemoteKey, Char:WaitForChild("Humanoid", 10),0xfffffff, Char:WaitForChild("Head", 5), game:GetService("Players").LocalPlayer.Backpack:GetChildren()[1].Name, Vector3.new())
+        end)()
+    end)
+end
+module.exports.KillPolice = function()
+    for i, v in pairs(workspace.Police:GetChildren()) do
+        module.exports.Damage(v)
+    end
+end
+module.exports.YellAll = function() 
+	game:GetService("ReplicatedStorage").RS_Package.Remotes.PlayerYell:FireServer(workspace.Citizens:GetChildren())
+end
+module.exports.Kill = function(char) 
+	module.exports.Damage(char)
+end
+module.exports.Init = function() 
+	module.variables.RemoteKey = module.exports.RemoteKey()
+end
+
+return module;
