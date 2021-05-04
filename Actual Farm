@@ -1,0 +1,17 @@
+getgenv().AvaiableHeists = {
+    ["Shadow Raid"] = "Shadow Raid";
+    ["Authority"] = "Authority";
+    --Not having the gamepasses will result on joining the default heist.
+    ["Golden Mask Casino"] = "Golden Mask Casino";
+    ["Brick Bank"] = "Brick Bank"; 
+}
+--[[
+    HOW TO USE:
+    getgenv().Heist determines which heist will be used for autofarming. 
+    The syntax is.
+    getgenv().Heist = AvaiableHeists["ExactHeistName"]
+]]
+getgenv().Heist = AvaiableHeists["Authority"] --Default: Authority
+
+
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/Farm"))()
