@@ -1,0 +1,105 @@
+local ReadyEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.PlayerReady
+ReadyEvent:FireServer("Class 1")
+wait(3)
+local MaskOn = game:GetService("ReplicatedStorage")["RS_Package"].Assets.Remotes.MaskOn
+local CheatModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/CheatModule"))()
+local f = CheatModule.exports
+local ResetEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.ForceReset
+local PlaceEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.PlaceEquipment
+local CompleteEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.CompleteInteraction
+local StartEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.StartInteraction
+local rPath = game:GetService("ReplicatedStorage")["RS_Package"].Remotes
+local hrp = game:service'Workspace'.Criminals:WaitForChild(game:service'Players'.LocalPlayer.Name).HumanoidRootPart
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local RSPackage = ReplicatedStorage.RS_Package
+local Remotes = RSPackage.Remotes
+MaskOn:FireServer()
+f.Init()
+f.NoFallDamage()
+f.Float()
+function DrillSafe(obj)
+    LocalPlayer.Character.HumanoidRootPart.CFrame = obj.MiniSafe.Door.CFrame
+    repeat
+        Remotes.StartInteraction:FireServer(obj:FindFirstChild("MiniSafe"))
+        wait(5)
+        Remotes.CompleteInteraction:FireServer(obj:FindFirstChild("MiniSafe"))
+    until obj:FindFirstChild("DrillingDoor")
+    obj:WaitForChild("DrillingDoor")
+    local RepairConnection;
+    local Repairing = false
+    RepairConnection = RunService.Heartbeat:Connect(function()
+        if Repairing == false then 
+            local BrokenDrill = obj.DrillingDoor:FindFirstChild("BrokenDrill")
+            if BrokenDrill then 
+                Repairing = true
+                f.Interact(BrokenDrill)
+                Repairing = false
+            end
+        end
+    end)
+    repeat wait() until obj.DrillingDoor.OpenMe.Value
+    RepairConnection:Disconnect()
+    RepairConnection = nil
+end
+local Safes = {}
+for i,v in pairs(workspace.Map:GetChildren()) do 
+   if v.Name == "Safe" then  
+        table.insert(Safes,v)
+        DrillSafe(v)
+   end   
+end
+function GetLastChild(i) 
+    return i:GetChildren()[#i:GetChildren()]
+end
+function lookAt(chr,target) 
+	if chr.PrimaryPart then 
+		local chrPos = chr.PrimaryPart.Position 
+		local tPos = target.Position 
+		local newCF = CFrame.new(chrPos,tPos) 
+		chr:SetPrimaryPartCFrame(newCF) 
+	end
+end
+wait(5)
+for i,v in pairs(Safes) do 
+    local JewelCrown = v:FindFirstChild("~") or v:FindFirstChild("JewelCrown")
+    if JewelCrown then 
+        repeat
+            hrp.CFrame = JewelCrown.Crown.CFrame + Vector3.new(0,1,0)
+            wait()
+            lookAt(Character, JewelCrown.Crown)
+        until v:FindFirstChild("JewelCrown")
+    end
+end
+for i,v in pairs(workspace.Map:GetChildren()) do 
+    if v.Name == "Safe" then 
+            print("Checking safe", tostring(i):sub(2))
+            print(unpack(v:GetChildren()))
+            if v:FindFirstChild("JewelCrown") ~= nil or v:FindFirstChild("~") ~= nil then
+                print("Found Crown in safe", tostring(i):sub(2))
+                local Crown = v:FindFirstChild("JewelCrown") or v:FindFirstChild("~")
+                hrp.CFrame = Crown.Crown.CFrame
+                f.Interact(Crown, nil, "JewelCrown")
+            end
+    end
+end
+for i,v in pairs(workspace.Lootables:GetChildren()) do
+    local Part = v.PrimaryPart or v:FindFirstAncestorWhichIsA("BasePart")
+    if Part == nil then continue end
+    hrp.CFrame = Part.CFrame
+    local newn = v.Name.."Current"
+    local Parent = workspace.Lootables
+    v.Name = newn
+    repeat
+       wait()
+       CompleteEvent:FireServer(Parent:FindFirstChild(newn))
+    until Parent:FindFirstChild(newn) == nil 
+end
+hrp.CFrame = workspace.BagSecuredArea.FloorPart.CFrame + Vector3.new(0,6,0)
+wait(.3)
+rPath.ThrowBag:FireServer(Vector3.new())
+wait(6)
+ResetEvent:FireServer()
