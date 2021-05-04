@@ -1,5 +1,5 @@
 _G.SelectedClass = "Class 1"
-local CheatModule = loadstring(game:HttpGet("https://anomicxv2.000webhostapp.com/script/CheatModule.lua"))()
+local CheatModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/CheatModule"))()
 local f = CheatModule.exports
 local ws = game:service'Workspace'
 local rPath = game:service'ReplicatedStorage'["RS_Package"].Remotes
