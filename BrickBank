@@ -1,0 +1,319 @@
+local SelectedClass = 1 
+local Class;
+if typeof(SelectedClass) == 'number' then 
+    Class = "Class "..tostring(SelectedClass)
+elseif typeof(SelectedClass) == 'string' then
+    Class = "Class "..SelectedClass
+elseif SelectedClass == nil then
+    Class = "Class "..tostring(math.random(1,3)) 
+end
+local ClassEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.SetClass
+ClassEvent:FireServer(Class)
+wait(0.1)
+local ReadyEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.PlayerReady
+ReadyEvent:FireServer(Class)
+local CheatModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/CheatModule"))()
+local f = CheatModule.exports
+local ws = game:service'Workspace'
+local IU = loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/UI"))()
+local rPath = game:service'ReplicatedStorage'["RS_Package"].Remotes
+local plrN = game:service'Players'.LocalPlayer.Name
+local ts = game:service'TweenService'
+local plr = ws.Criminals:WaitForChild(plrN)
+local CompleteEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.CompleteInteraction
+local StartEvent = game:GetService("ReplicatedStorage")["RS_Package"].Remotes.StartInteraction
+local hrp = plr.HumanoidRootPart
+local SafeSpot = CFrame.new(4.83857536, 24.7999973, 82.4946365)
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local RSPackage = ReplicatedStorage.RS_Package
+local Remotes = RSPackage.Remotes
+local GuardSpots = {
+    CFrame.new(16.5560989, 15.6608791, 84.0334702, -0.999033749, 0, 0.0439496599, 0, 1, 0, -0.0439496599, 0, -0.999033749);
+    CFrame.new(19.604353, 15.6608791, 117.012978, 0.999368012, 0, -0.0355473422, 0, 1, 0, 0.0355473422, 0, 0.999368012);
+}
+function GotDetected() 
+	local targets = {}
+	for i,v in pairs(workspace.Citizens:GetChildren()) do table.insert(targets, v) end 
+	for i,v in pairs(workspace.Police:GetChildren()) do  table.insert(targets, v) end 
+	for i,v in pairs(game:GetService("Workspace").Cameras:GetChildren()) do  table.insert(targets, v) end 
+	for i, v in pairs(targets) do 
+		if v:FindFirstChild("CamName") then 
+			if v.Phone.Active == true then return true end
+		else
+			if v:FindFirstChild("Alerted") then 
+				return true
+			end
+		end
+	end
+	return false
+end
+coroutine.wrap(function()
+	repeat wait() until GotDetected() == true 
+	rPath.ForceReset:FireServer()
+end)()
+--ws.Map.ComputerHacks:WaitForChild("HackableComputer")
+f.Init()
+function GetKeyCard() 
+    return ws.Map:WaitForChild("KeyCard")
+end
+function GetComputerToHack() 
+    local com= ws.Map.ComputerHacks:GetChildren()
+    for i,v in pairs(com) do 
+        wait()
+        if v:FindFirstChild("Hack") then return v end
+    end
+end
+function GetMainVault() 
+    for i, v in pairs(ws.Map:GetChildren()) do 
+        wait()
+        if v.Name == "VaultDoor" and v:FindFirstChild("THEVAULT") then return v end
+    end
+end
+function GetGuards() 
+    local t = {}
+    for i,v in pairs(workspace.Police:GetChildren()) do 
+        wait()
+        if v.Phone.Active == true then table.insert(t,v) end
+    end
+    return t
+end
+function GetDeadGuards() 
+    local t = {}
+    for i,v in pairs(workspace.Bodies:GetChildren()) do 
+        table.insert(t,v)
+    end
+    return t
+end
+function GetNearGuards(dist) 
+    wait()
+    local Targets = {}
+    local r = {}
+    for i,v in pairs(workspace.Police:GetChildren()) do table.insert(Targets,v) end
+    for i, v in pairs(Targets) do 
+        if (hrp.CFrame.p - v:WaitForChild("HumanoidRootPart").CFrame.p).magnitude <= dist then table.insert(r,v) end
+    end
+    return r;
+end
+function ctw(target, sex, delay) 
+    local goal = {}
+    goal.CFrame = sex.CFrame - Vector3.new(0,5,0)
+ 
+    local tweenInfo = TweenInfo.new(delay) 
+ 
+    local tween = ts:Create(target, tweenInfo, goal)
+ 
+    tween:Play() 
+    tween.Completed:Wait()
+end
+f.Float()
+f.Noclip(false)
+if ws.Map:FindFirstChild("Card Read!") == nil then --Disable cams if they're not taken
+    local k = GetKeyCard()
+    hrp.CFrame = k.KeyCard.CFrame - Vector3.new(0,10,0)
+    for i=1,3 do
+        hrp.CFrame = k.KeyCard.CFrame - Vector3.new(0,10,0)
+        StartEvent:FireServer(k)
+        wait(.7)
+        CompleteEvent:FireServer(k)
+    end
+    wait()
+    hrp.CFrame = ws.Map.CardReader.Screen.CFrame - Vector3.new(0,5,0)
+    local c = ws.Map.CardReader
+    repeat
+        StartEvent:FireServer(c)
+        wait(.7)
+        CompleteEvent:FireServer(c)
+    until ws.Map:FindFirstChild("Card Read!")
+end
+local MaskOn = game:GetService("ReplicatedStorage")["RS_Package"].Assets.Remotes.MaskOn
+MaskOn:FireServer()
+ctw(hrp, {CFrame = hrp.CFrame - Vector3.new(0,10,0)}, 3)
+ctw(hrp, {CFrame = CFrame.new(((GuardSpots[1].Position + GuardSpots[2].Position) / 2) - Vector3.new(0,7,0));},1)
+for i,v in pairs(GetNearGuards(20)) do 
+    f.Damage(v)
+end
+repeat wait() until #GetDeadGuards() == 2 
+for i,v in pairs(workspace.Bodies:GetChildren()) do 
+    ctw(hrp, v.HumanoidRootPart,1)
+    f.Interact(v, nil, "Pager")
+    if i == 2 then 
+        f.Interact(workspace.Bodies:GetChildren()[2],nil,"DeadBody") -- civs detect the body
+    end
+end
+f.Noclip(true)
+f.NoFallDamage()
+hrp.CFrame = GetComputerToHack().Display.CFrame - Vector3.new(0,10,0)
+repeat 
+    wait()
+    if game:GetService("ReplicatedStorage")["RS_Package"].ReplicatedGameStatus.Objective.Value:lower():find("timelock") then break end
+    print("Hacking")
+    pcall(function()
+        local computer = GetComputerToHack()
+        local parent = computer.Parent
+        local oldName = computer.Name
+        local newName = oldName.."Current"
+        computer.Name = newName
+        local newObj = parent:FindFirstChild(newName)
+        hrp.CFrame = newObj.Display.CFrame - Vector3.new(0,6,0)
+        StartEvent:FireServer(newObj)
+        wait(1.7)
+        CompleteEvent:FireServer(newObj)
+        wait(.9)
+    end)
+until typeof(ws.Map.ComputerHacks:FindFirstChild("HackedComputer")) == "Instance"
+LowDetection = function(Character)
+    local Mask = Character:FindFirstChild("Mask ON")
+    if (Mask) then
+        local MaskClone = Mask:Clone()
+        MaskClone.Parent = Character
+        Mask:Destroy()
+    end
+end
+function ActivateTimelock(tm)
+    hrp.CFrame = ws.Map.TimelockScanner.Wedge.CFrame - Vector3.new(0,10,0)
+    f.Interact(tm)
+    local ResetConnection;
+    local Reseting = false
+    ResetConnection = game.RunService.Heartbeat:Connect(function()
+        if Reseting == false and game:GetService("ReplicatedStorage")["RS_Package"].ReplicatedGameStatus.Objective.Value:lower():find("reset") then 
+            f.Interact(tm, nil, "TimelockScanner")
+        end
+    end)
+   repeat wait() until game:GetService("ReplicatedStorage")["RS_Package"].ReplicatedGameStatus.Objective.Value:lower():find("drill")
+   ResetConnection:Disconnect()
+   ResetConnection = nil --gc
+   Reseting = false
+end
+
+function DrillVault(obj)
+    MaskOn:FireServer()
+    LowDetection(Character)
+    game.RunService.Heartbeat:Wait()
+    LocalPlayer.Character.HumanoidRootPart.CFrame = obj.Door.CFrame
+    repeat
+        Remotes.StartInteraction:FireServer(obj)
+        wait(5)
+        Remotes.CompleteInteraction:FireServer(obj)
+    until obj.Name == "DrillingDoor"
+    --obj:WaitForChild("Drill")
+    local RepairConnection;
+    local Repairing = false
+    RepairConnection = RunService.Heartbeat:Connect(function()
+        if Repairing == false then 
+            local BrokenDrill = obj:FindFirstChild("BrokenDrill")
+            if BrokenDrill then 
+                Repairing = true
+                f.Interact(BrokenDrill)
+                Repairing = false
+            end
+        end
+    end)
+    repeat wait() until obj.OpenMe.Value
+    RepairConnection:Disconnect()
+    RepairConnection = nil
+end
+function DrillSafe(obj)
+    MaskOn:FireServer()
+    LowDetection(Character)
+    game.RunService.Heartbeat:Wait()
+    LocalPlayer.Character.HumanoidRootPart.CFrame = obj.MiniSafe.Door.CFrame
+    repeat
+        Remotes.StartInteraction:FireServer(obj:FindFirstChild("MiniSafe"))
+        wait(5)
+        Remotes.CompleteInteraction:FireServer(obj:FindFirstChild("MiniSafe"))
+    until obj:FindFirstChild("DrillingDoor")
+    obj:WaitForChild("DrillingDoor")
+    local RepairConnection;
+    local Repairing = false
+    RepairConnection = RunService.Heartbeat:Connect(function()
+        if Repairing == false then 
+            local BrokenDrill = obj.DrillingDoor:FindFirstChild("BrokenDrill")
+            if BrokenDrill then 
+                Repairing = true
+               f.Interact(BrokenDrill)
+                Repairing = false
+            end
+        end
+    end)
+    repeat wait() until obj.DrillingDoor.OpenMe.Value
+    RepairConnection:Disconnect()
+    RepairConnection = nil
+end
+ActivateTimelock(ws.Map:WaitForChild("TimelockScanner"))
+DrillVault(GetMainVault())
+print("Drilled Main Vault.")
+wait(.5)
+function WaitForEscape() 
+    repeat wait() until game:GetService("ReplicatedStorage")["RS_Package"].ReplicatedGameStatus.Objective.Value:lower():find("escape") and game:GetService("ReplicatedStorage")["RS_Package"].ReplicatedGameStatus.Objective.Value:lower():find("wait") == nil
+end
+function GetCageDoors()
+    local CageDoors = {}
+    for i,v in pairs(ws.Map:GetChildren()) do 
+        if v.Name == "VaultDoor" and v:FindFirstChild("THEVAULT") == nil then table.insert(CageDoors, v) end
+    end
+    return CageDoors
+end
+--We do not need to drill the cage doors for completing the heist. (- 7 minute wait time.)
+--[[for i,v in pairs(GetCageDoors()) dod
+    DrillVault(v)
+end]] 
+function GetRandomLoot() 
+    for i,v in pairs(ws.RandomLoot:GetChildren()) do 
+        hrp.CFrame = v.PrimaryPart.CFrame - Vector3.new(0,7,0)
+        wait(.2)
+        f.Interact(v)
+        --[[local parent = v.Parent
+        local part = v.PrimaryPart
+        if part == nil then part = v:FindFirstChildWhichIsA("BasePart") end
+        if part == nil then continue end
+        hrp.CFrame = part.CFrame - Vector3.new(0,7,0)
+        local newName = v.Name.."Current"
+        v.Name = newName
+        local newPart = parent:FindFirstChild(newName)
+        repeat
+            StartEvent:FireServer(newPart)
+            wait()
+            CompleteEvent:FireServer(newPart)
+        until parent:FindFirstChild(newName) == nil]]
+    end
+end
+function GetLoot() 
+    for i,v in pairs(ws:GetChildren()) do 
+        if v.Name:lower():find("deposit") and v.Name ~= "DepositPapers" then
+            hrp.CFrame = v.PrimaryPart.CFrame - Vector3.new(0,7,0)
+            wait(.2)
+            f.Interact(v)
+            --[[local newName = v.Name.."Current"
+            v.Name = newName
+            local newPart = parent:FindFirstChild(newName)
+            repeat
+                StartEvent:FireServer(newPart)
+                wait()
+                CompleteEvent:FireServer(newPart)
+            until parent:FindFirstChild(newName) == nil]]
+        end
+    end
+end
+function GotoEscape() 
+    hrp.CFrame = CFrame.new(-105.672127, 48.4500542, -2.17483616, 0.0276067499, 0, -0.999618888, 0, 1, 0, 0.999618888, 0, 0.0276067499) + Vector3.new(0,2,0)
+    wait(1)
+end
+function DropBags() 
+    rPath.ThrowBag:FireServer(CFrame.new(-105.672127, 48.4500542, -2.17483616, 0.0276067499, 0, -0.999618888, 0, 1, 0, 0.999618888, 0, 0.0276067499))
+    wait(3)
+end
+function Reset() 
+    wait(3)
+    game:GetService("ReplicatedStorage")["RS_Package"].Remotes.ForceReset:FireServer()
+end
+GetRandomLoot()
+GetLoot()
+f.Noclip(false)
+GotoEscape()
+DropBags()
+WaitForEscape()
+Reset()
