@@ -223,7 +223,7 @@ elseif game.PlaceId == Ids.Authority then
                     }
 
                     getgenv().Heist = AvaiableHeists["]]..getgenv().Heist..[["]
-                    loadstring(game:HttpGet("https://anomicxv2.000webhostapp.com/script/NotorietyAutoPlayer.lua"))()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/NotorietyAutoPlayer"))()
                 ]])
             end
         end)
@@ -297,7 +297,7 @@ elseif game.PlaceId == Ids.Jewlery then
                     }
 
                     getgenv().Heist = AvaiableHeists["]]..getgenv().Heist..[["]
-                    loadstring(game:HttpGet("https://anomicxv2.000webhostapp.com/script/NotorietyAutoPlayer.lua"))()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/NotorietyAutoPlayer"))()
                 ]])
             end
         end)
@@ -363,7 +363,7 @@ elseif game.PlaceId == Ids["Shadow Raid"] then
                     }
 
                     getgenv().Heist = AvaiableHeists["]]..getgenv().Heist..[["]
-                    loadstring(game:HttpGet("https://anomicxv2.000webhostapp.com/script/NotorietyAutoPlayer.lua"))()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/NotorietyAutoPlayer"))()
                 ]])
             end
         end)
@@ -429,7 +429,7 @@ elseif game.PlaceId == Ids["Golden Mask Casino"] then
                     }
 
                     getgenv().Heist = AvaiableHeists["]]..getgenv().Heist..[["]
-                    loadstring(game:HttpGet("https://anomicxv2.000webhostapp.com/script/NotorietyAutoPlayer.lua"))()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/NotorietyAutoPlayer"))()
                 ]])
             end
         end)
@@ -495,7 +495,7 @@ elseif game.PlaceId == Ids["Brick Bank"] then
                     }
 
                     getgenv().Heist = AvaiableHeists["]]..getgenv().Heist..[["]
-                    loadstring(game:HttpGet("https://anomicxv2.000webhostapp.com/script/NotorietyAutoPlayer.lua"))()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/Cheko-cell/Notoriety-Farm/main/NotorietyAutoPlayer"))()
                 ]])
             end
         end)
